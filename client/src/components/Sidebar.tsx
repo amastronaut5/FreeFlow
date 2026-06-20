@@ -59,7 +59,7 @@ export default function Sidebar() {
             const Icon = item.icon;
             return (
               <li key={item.title}>
-                <button className={` w-full flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all hover:bg-primary hover:scale-105 mb-10`} onClick={()=>{navigate(`${item.path}`)}}>
+                <button className={` w-full flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-medium transition-all hover:bg-primary hover:scale-105 mb-10 cursor-pointer`} onClick={()=>{navigate(`${item.path}`)}}>
                   <Icon size={18} />
                   {item.title}
                 </button>
