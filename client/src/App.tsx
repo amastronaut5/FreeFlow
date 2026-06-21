@@ -6,6 +6,7 @@ import UploadPage from "./pages/Upload";
 import DashboardLayout from "./components/layout";
 import type{ Detection } from "./types/Detection";
 import { useState, useEffect} from "react";
+import NotFound from "./pages/NotFound";
 const API_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 import axios from "axios";
 function App() {
@@ -48,6 +49,11 @@ function App() {
             element={<UploadPage />}
           />
         </Route>
+
+         <Route
+            path="*"
+            element={<NotFound />}
+          />
       </Routes>
     </BrowserRouter>
   );

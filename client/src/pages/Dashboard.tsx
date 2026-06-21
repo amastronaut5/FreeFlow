@@ -25,7 +25,7 @@ export default function Dashboard({
 
       {/* Charts */}
 
-      <ChartSection />
+      <ChartSection violations={violations} />
     </div>
   );
 }
