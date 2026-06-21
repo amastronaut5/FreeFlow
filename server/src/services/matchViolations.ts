@@ -150,6 +150,47 @@ function findOwnerVehicle(
   return bestVehicle;
 }
 
+function deduplicateViolations(
+  violations: {
+    type: string;
+    confidence: number;
+  }[]
+): {
+  type: string;
+  confidence: number;
+}[] {
+  const uniqueViolations =
+    new Map<
+      string,
+      {
+        type: string;
+        confidence: number;
+      }
+    >();
+
+  for (const violation of violations) {
+    const existing =
+      uniqueViolations.get(
+        violation.type
+      );
+
+    if (
+      !existing ||
+      violation.confidence >
+        existing.confidence
+    ) {
+      uniqueViolations.set(
+        violation.type,
+        violation
+      );
+    }
+  }
+
+  return Array.from(
+    uniqueViolations.values()
+  );
+}
+
 export function matchViolations(
   vehicles: VehicleDetection[],
   violations: ViolationDetection[]
@@ -187,6 +228,16 @@ export function matchViolations(
         confidence:
           violation.confidence,
       });
+  }
+
+  // Remove duplicate violation types
+  // for the same vehicle and keep
+  // the highest confidence one.
+  for (const item of matched.values()) {
+    item.violations =
+      deduplicateViolations(
+        item.violations
+      );
   }
 
   return Array.from(
