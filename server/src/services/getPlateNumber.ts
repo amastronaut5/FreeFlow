@@ -1,52 +1,115 @@
 import { GoogleGenAI } from "@google/genai";
-import * as fs from "node:fs";
+import fs from "node:fs/promises";
+import path from "node:path";
 import dotenv from "dotenv";
+
 dotenv.config();
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-const GEMINI_MODEL = process.env.GEMINI_MODEL;
+
+export interface PlateDetectionResult {
+  numberPlate: string | null;
+  confidence: number;
+}
+
 const ai = new GoogleGenAI({
-    apiKey: `${GEMINI_API_KEY}`
+  apiKey: process.env.GEMINI_API_KEY!,
 });
 
-export async function detectPlate(filePath: string){
-  const base64ImageFile = fs.readFileSync(`${filePath}`, {
-      encoding: "base64",
-  });
-  
-  const response = await ai.models.generateContent({
-      model: `${GEMINI_MODEL}`,
-      contents: [
-        {
-          inlineData: {
-            mimeType: "image/png",
-            data: base64ImageFile,
+export async function detectPlate(
+  filePath: string
+): Promise<PlateDetectionResult> {
+  try {
+    const imageBase64 =
+      await fs.readFile(filePath, {
+        encoding: "base64",
+      });
+
+    const extension = path
+      .extname(filePath)
+      .toLowerCase();
+
+    const mimeType =
+      extension === ".png"
+        ? "image/png"
+        : "image/jpeg";
+
+    const response =
+      await ai.models.generateContent({
+        model:
+          process.env.GEMINI_MODEL!,
+
+        contents: [
+          {
+            inlineData: {
+              mimeType,
+              data: imageBase64,
+            },
           },
-        },
-        `
-          Analyze this vehicle image.
-              
-          Return ONLY valid JSON in the format:
-              
-          {
-            "vehicleType": "",
-            "numberPlate": "",
-            "confidence": 0
-          }
-              
-          If no plate is detected:
-              
-          {
-            "vehicleType": "",
-            "numberPlate": null,
-            "confidence": 0
-          }
+
           `
-      ],
-      config: {
-        responseMimeType: "application/json",
-      },
-  });
-  const result = JSON.parse(response.text!);
-  console.log(result);
-  return result;
+Analyze this traffic image and identify the vehicle registration number.
+
+Rules:
+- Return ONLY valid JSON.
+- Remove all spaces from the plate number.
+- Convert letters to uppercase.
+- Confidence must be between 0 and 1.
+- If the plate is unreadable or not visible, return null.
+- Do not return markdown.
+- Do not return explanations.
+
+Example:
+
+{
+  "numberPlate": "PB02AB1234",
+  "confidence": 0.95
+}
+          `,
+        ],
+
+        config: {
+          responseMimeType:
+            "application/json",
+        },
+      });
+
+    const parsed = JSON.parse(
+      response.text ?? "{}"
+    );
+
+    const numberPlate =
+      parsed.numberPlate
+        ?.replace(/\s+/g, "")
+        ?.toUpperCase() ?? null;
+
+    const confidence =
+      typeof parsed.confidence ===
+      "number"
+        ? parsed.confidence
+        : 0;
+
+    if (
+      !numberPlate ||
+      confidence < 0.7
+    ) {
+      return {
+        numberPlate: null,
+        confidence,
+      };
+    }
+
+    return {
+      numberPlate,
+      confidence,
+    };
+  } catch (error) {
+    console.error(
+      "Plate Detection Error:",
+      error
+    );
+
+    return {
+      numberPlate: null,
+      confidence: 0,
+    };
+  }
 }

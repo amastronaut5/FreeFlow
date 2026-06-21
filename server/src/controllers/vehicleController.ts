@@ -1,6 +1,10 @@
-import { detectPlate } from "../services/getPlateNumber.js";
+import { detectVehicle } from "../services/detectVehicle.js";
+import { detectViolations, getAllViolations } from "../services/detectViolations.js";
+import { matchViolations } from "../services/matchViolations.js";
 import fs from 'node:fs/promises';
 import type{ Request, Response } from "express";
+import { processMatchedVehicles } from "../services/processMatchedVehicles.js";
+
 export const checkViolationsHandler =async(req:Request, res: Response)=>{
     let imagePath: string | undefined;
     try{
@@ -11,12 +15,19 @@ export const checkViolationsHandler =async(req:Request, res: Response)=>{
             message: "Please upload a valid image file",
           });
         }
-        const result = await detectPlate(imagePath);
+        const vehicles = await detectVehicle(imagePath);
+        const detected = await detectViolations(imagePath);
+        const violations = getAllViolations(detected);
+        const matchedVehicles = matchViolations(vehicles, violations);
+        const imageBuffer = await fs.readFile(imagePath);
+        const processedVehicles = await processMatchedVehicles(matchedVehicles, imageBuffer);
+
+        
         return res.status(200).json({
-            success: true,
-            message: "Vehicle analyzed successfully",
-            data: result,
-        });
+        success: true,
+        message: "Violations processed successfully",
+        data: processedVehicles
+      });
     }
     catch(err){
         console.error("Detection Error:", err);
