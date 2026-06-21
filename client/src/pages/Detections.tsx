@@ -314,7 +314,7 @@ export default function Detections({
                   <img
                     src={item.evidenceImageUrl}
                     alt="Violation"
-                    className="h-16 w-24 rounded-lg object-cover"
+                    className="h-16 w-24 rounded-lg object-contain"
                   />
                 </td>
 
@@ -413,7 +413,7 @@ export default function Detections({
             <img
               src={selectedViolation.evidenceImageUrl}
               alt="Evidence"
-              className="mb-6 aspect-video w-full rounded-xl object-cover"
+              className="mb-6 aspect-video w-full rounded-xl object-contain"
             />
       
             {/* Vehicle Information */}
