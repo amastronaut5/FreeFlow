@@ -4,6 +4,7 @@ import axios from "axios";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import type{ Detection, DetectionsPageProps } from "../types/Detection";
+import { getViolationLabel } from "../utils/violationLabels";
 const API_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
 
 export default function Detections({
@@ -320,7 +321,9 @@ export default function Detections({
 
                 <td className="px-6 py-4">
                   {item.violations
-                    .map((v) => v.type)
+                    .map((v) =>
+                      getViolationLabel(v.type)
+                    )
                     .join(", ")}
                 </td>
 
@@ -337,7 +340,7 @@ export default function Detections({
                     {item.violations.map((v, idx) => (
                       <div key={idx}>
                         <p className="font-medium">
-                          {v.type}
+                          { getViolationLabel(v.type)}
                         </p>
                     
                         <div className="flex items-center gap-2">

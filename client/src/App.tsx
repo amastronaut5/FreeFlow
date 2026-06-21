@@ -46,7 +46,7 @@ function App() {
 
           <Route
             path="/upload"
-            element={<UploadPage />}
+            element={<UploadPage fetchViolations={fetchViolations}></UploadPage>}
           />
         </Route>
 

@@ -2,7 +2,12 @@ import { Upload, ImageIcon } from "lucide-react";
 import { useRef, useState, useEffect } from "react";
 import { Loader } from "lucide-react";
 const API_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-export default function UploadPage() {
+interface UploadPageProps {
+  fetchViolations: () => Promise<void>;
+}
+export default function UploadPage({
+  fetchViolations,
+}: UploadPageProps) {
   const imageRef = useRef<HTMLInputElement>(null);
   const [fileName, setFileName] = useState("");
   const [message, setMessage] = useState<string>("");
@@ -40,8 +45,9 @@ export default function UploadPage() {
         if (!response.ok) {
           throw new Error(data.message || "Failed to analyze image");
         }
+        await fetchViolations();
+        setMessage(data.message);
 
-        setMessage(JSON.stringify(data));
         console.log(data.data);
     }
     catch(err){
@@ -69,8 +75,10 @@ export default function UploadPage() {
   return (
     <div className="mx-auto max-w-7xl px-6 py-10">
       {/* Header */}
-      {message&&(
-        <div className="text-center bg-sidebar/50 text-white p-4 rounded-2xl">{message}</div>
+      {message && (
+        <div className="fixed top-4 left-1/2 z-50 bg-sidebar text-white px-6 py-4 rounded-2xl shadow-lg">
+          {message}
+        </div>
       )}
       <div className="mb-12 flex flex-col items-center">
         <h1 className="text-4xl font-bold tracking-tight">
