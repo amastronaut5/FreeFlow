@@ -1,28 +1,16 @@
 import { Eye, Loader2, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
-
+import type{ Detection, DetectionsPageProps } from "../types/Detection";
 const API_BACKEND_URL = import.meta.env.VITE_BACKEND_URL;
-interface DetectedViolation {
-  type: string;
-  confidence: number;
-}
 
-interface Detection {
-  _id: string;
-  plateNumber: string;
-  vehicleType: string;
-  evidenceImageUrl: string;
-  location: string;
-  status: "Pending" | "Confirmed" | "Dismissed";
-  detectedAt: string;
-  violations: DetectedViolation[];
-}
-export default function Detections() {
-  const [violations, setViolations] = useState<Detection[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function Detections({
+  violations,
+  setViolations,
+  loading
+  }: DetectionsPageProps) {
   const [selectedViolation, setSelectedViolation] = useState<Detection | null>(null);
   const [newStatus, setNewStatus] = useState<"Pending" | "Confirmed" | "Dismissed">("Pending");
   const [updating, setUpdating] = useState(false);
@@ -68,23 +56,6 @@ export default function Detections() {
       );
     }
   );
-  useEffect(() => {
-    const fetchViolations = async () => {
-      try {
-        const res = await axios.get(
-          `${API_BACKEND_URL}/violations`
-        );
-        setViolations(res.data.data);
-      } catch (err) {
-        console.error(err);
-      }
-      finally{
-        setLoading(false);
-      }
-    };
-
-    fetchViolations();
-  }, []);
   const updateStatus = async () => {
     if (!selectedViolation) return;
 

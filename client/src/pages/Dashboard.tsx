@@ -1,7 +1,10 @@
 import StatsGrid from "../components/dashboard/StatsGrid";
 import ChartSection from "../components/dashboard/ChartSection";
+import type{ StatsGridProps } from "../types/Detection";
 
-export default function Dashboard() {
+export default function Dashboard({
+  violations
+  }: StatsGridProps) {
   return (
     <div className="space-y-6 my-5 mx-5">
       {/* Header */}
@@ -18,7 +21,7 @@ export default function Dashboard() {
 
       {/* Statistics */}
 
-      <StatsGrid />
+      <StatsGrid violations={violations} />
 
       {/* Charts */}
 
