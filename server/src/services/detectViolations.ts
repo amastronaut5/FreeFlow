@@ -1,5 +1,4 @@
-import fs from "node:fs/promises";
-
+import type{ TripleRidingViolation } from "./detectTripleRiding.js";
 export interface ViolationDetection {
   type: string;
 
@@ -17,7 +16,7 @@ export interface DetectedViolations {
 
   seatbeltViolations: ViolationDetection[];
 
-  tripleRidingViolations: ViolationDetection[];
+  tripleRidingViolations: TripleRidingViolation[];
 
   wrongSideViolations: ViolationDetection[];
 
