@@ -1,6 +1,4 @@
 import { GoogleGenAI } from "@google/genai";
-import fs from "node:fs/promises";
-import path from "node:path";
 import dotenv from "dotenv";
 
 dotenv.config();
@@ -15,22 +13,12 @@ const ai = new GoogleGenAI({
 });
 
 export async function detectPlate(
-  filePath: string
+  imageBuffer: Buffer,
+  mimeType = "image/jpeg"
 ): Promise<PlateDetectionResult> {
   try {
     const imageBase64 =
-      await fs.readFile(filePath, {
-        encoding: "base64",
-      });
-
-    const extension = path
-      .extname(filePath)
-      .toLowerCase();
-
-    const mimeType =
-      extension === ".png"
-        ? "image/png"
-        : "image/jpeg";
+      imageBuffer.toString("base64");
 
     const response =
       await ai.models.generateContent({

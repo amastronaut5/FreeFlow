@@ -44,10 +44,8 @@ function normalizeDetections(
 }
 
 export async function detectVehicle(
-  imagePath: string
+  imageBuffer: Buffer
 ): Promise<VehicleDetection[]> {
-  const imageBuffer =
-    await fs.readFile(imagePath);
 
   const base64Image =
     imageBuffer.toString("base64");

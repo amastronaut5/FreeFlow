@@ -187,13 +187,9 @@ export function getAllViolations(
 }
 
 export async function detectViolations(
-  imagePath: string
+  imageBuffer: Buffer
 ): Promise<DetectedViolations> {
   try {
-    const imageBuffer =
-      await fs.readFile(
-        imagePath
-      );
 
     const base64Image =
       imageBuffer.toString(
