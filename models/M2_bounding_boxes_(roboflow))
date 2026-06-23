@@ -4,7 +4,7 @@ from inference_sdk import InferenceHTTPClient
 # 2. Connect to your workflow
 client = InferenceHTTPClient(
     api_url="https://serverless.roboflow.com",
-    api_key="n5on8UYbL5nzMtyI1BEh"
+    api_key="MY_API_KEY"
 )
 
 # 3. Run your workflow on an image
