@@ -4,13 +4,13 @@ from inference_sdk import InferenceHTTPClient
 # 2. Connect to your workflow
 client = InferenceHTTPClient(
     api_url="https://serverless.roboflow.com",
-    api_key="MY_API_KEY"
+    api_key="API_KEY"
 )
 
 # 3. Run your workflow on an image
 result = client.run_workflow(
-    workspace_name="akshat-mehta-sbs4y",
-    workflow_id="custom-workflow",
+    workspace_name="akshats-workspace-me9sa",
+    workflow_id="custom-workflow-2",
     images={
         "image": "YOUR_IMAGE.jpg" # Path to your image file
     },
